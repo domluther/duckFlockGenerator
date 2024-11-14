@@ -41,33 +41,11 @@ textarea.error {
   animation: shake 0.5s;
 }
 
-@keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-10px);
-  }
-  75% {
-    transform: translateX(10px);
-  }
-}
-
 .error-message {
   color: #e53e3e;
   margin-top: 5px;
   display: none;
   animation: fadeIn 0.3s;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 label[for='names'] {
@@ -77,10 +55,11 @@ label[for='names'] {
 
 .controls {
   display: flex;
-  gap: 10px;
+  gap: 15px;
   align-items: center;
   justify-content: center;
   margin: 20px 0;
+  flex-wrap: wrap;
 }
 
 input[type='number'] {
@@ -89,6 +68,33 @@ input[type='number'] {
   border: 2px solid #4299e1;
   border-radius: 5px;
   font-size: 16px;
+}
+
+input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.beta-badge {
+  background: linear-gradient(45deg, #ff4e50, #f9d423);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7em;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-left: 8px;
+  display: inline-block;
+  animation: pulse 2s infinite;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 button {
@@ -149,16 +155,6 @@ button:hover {
   animation: waddle 1s infinite;
 }
 
-@keyframes waddle {
-  0%,
-  100% {
-    transform: rotate(-5deg);
-  }
-  50% {
-    transform: rotate(5deg);
-  }
-}
-
 .share-section {
   grid-column: 1 / -1;
   text-align: center;
@@ -177,23 +173,47 @@ button:hover {
   background-color: #2f855a;
 }
 
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+/* Animations */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
 }
 
-input[type='checkbox'] {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.controls {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-  justify-content: center;
-  margin: 20px 0;
-  flex-wrap: wrap;
+@keyframes waddle {
+  0%,
+  100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
