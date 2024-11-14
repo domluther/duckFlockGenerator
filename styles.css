@@ -176,3 +176,24 @@ button:hover {
 .share-section button:hover {
   background-color: #2f855a;
 }
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.controls {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}

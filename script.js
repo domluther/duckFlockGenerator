@@ -67,12 +67,56 @@ function shuffleArray(array) {
   return array;
 }
 
+function distributeExtra(groups, extraMembers) {
+  const shuffledExtra = shuffleArray([...extraMembers]);
+  let extraIndex = 0;
+
+  // Distribute extra members randomly across groups
+  while (extraIndex < shuffledExtra.length) {
+    const randomGroupIndex = Math.floor(Math.random() * groups.length);
+    groups[randomGroupIndex].push(shuffledExtra[extraIndex]);
+    extraIndex++;
+  }
+
+  return groups;
+}
+
+// Previous functions remain the same until generateGroups...
+
+function createBalancedGroups(names, targetGroupSize) {
+  const totalPeople = names.length;
+  const minGroups = Math.ceil(totalPeople / targetGroupSize);
+
+  // Calculate how many larger groups we need
+  const extraPeople = totalPeople % minGroups;
+  const numLargerGroups = extraPeople || minGroups;
+  const baseGroupSize = Math.floor(totalPeople / minGroups);
+
+  let groups = [];
+  let namesIndex = 0;
+
+  // Create the larger groups first
+  for (let i = 0; i < numLargerGroups; i++) {
+    groups.push(names.slice(namesIndex, namesIndex + baseGroupSize + 1));
+    namesIndex += baseGroupSize + 1;
+  }
+
+  // Create the regular-sized groups with remaining people
+  while (namesIndex < names.length) {
+    groups.push(names.slice(namesIndex, namesIndex + baseGroupSize));
+    namesIndex += baseGroupSize;
+  }
+
+  return groups;
+}
+
 function generateGroups() {
   const resultsDiv = document.getElementById('results');
   resultsDiv.innerHTML = '';
 
   const namesText = document.getElementById('names').value.trim();
   const groupSize = parseInt(document.getElementById('groupSize').value);
+  const shouldOverflock = document.getElementById('overflock').checked;
 
   if (!namesText) {
     showError();
@@ -96,9 +140,15 @@ function generateGroups() {
 
   names = shuffleArray(names);
 
-  const groups = [];
-  for (let i = 0; i < names.length; i += groupSize) {
-    groups.push(names.slice(i, i + groupSize));
+  let groups;
+  if (shouldOverflock) {
+    groups = createBalancedGroups(names, groupSize);
+  } else {
+    // Original grouping logic
+    groups = [];
+    for (let i = 0; i < names.length; i += groupSize) {
+      groups.push(names.slice(i, i + groupSize));
+    }
   }
 
   setTimeout(() => {
@@ -152,6 +202,8 @@ function generateGroups() {
     resultsDiv.appendChild(shareDiv);
   }, 3000);
 }
+
+// Rest of the code remains the same...
 
 // On page load, check for names in URL
 window.addEventListener('load', () => {

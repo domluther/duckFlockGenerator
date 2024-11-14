@@ -24,6 +24,12 @@
       <div class="controls">
         <label for="groupSize">Ducks per flock:</label>
         <input type="number" id="groupSize" min="1" value="2" />
+        <div class="checkbox-container">
+          <input type="checkbox" id="overflock" />
+          <label for="overflock"
+            >Overflock [Beta] (distribute extra ducks)</label
+          >
+        </div>
         <button onclick="generateGroups()">Generate Flocks!</button>
       </div>
     </div>
