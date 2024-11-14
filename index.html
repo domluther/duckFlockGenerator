@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Duck Flock Generator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>🦆 Duck Flock Generator 🦆</h1>
+
+    <div class="duck-container">
+      <span class="duck">🦆</span>
+    </div>
+
+    <div class="input-section">
+      <label for="names">Enter names (one per line):</label>
+      <textarea
+        id="names"
+        placeholder="John Duck&#10;Mary Duck&#10;Donald Duck"
+      ></textarea>
+      <div id="error-message" class="error-message">
+        🦆 Quack! Please enter some names before generating flocks!
+      </div>
+
+      <div class="controls">
+        <label for="groupSize">Ducks per flock:</label>
+        <input type="number" id="groupSize" min="1" value="3" />
+        <button onclick="generateGroups()">Generate Flocks!</button>
+      </div>
+    </div>
+
+    <div class="loading">
+      <h2>Gathering the ducks... 🦆</h2>
+      <div class="duck">🦆</div>
+    </div>
+
+    <div class="results" id="results"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
