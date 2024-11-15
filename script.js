@@ -81,8 +81,6 @@ function distributeExtra(groups, extraMembers) {
   return groups;
 }
 
-// Previous functions remain the same until generateGroups...
-
 function createBalancedGroups(names, targetGroupSize) {
   const totalPeople = names.length;
   const minGroups = Math.ceil(totalPeople / targetGroupSize);
