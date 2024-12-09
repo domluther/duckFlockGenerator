@@ -81,8 +81,18 @@ function distributeExtra(groups, extraMembers) {
   return groups;
 }
 
-// Previous functions remain the same until generateGroups...
+const quackAudios = [
+  'duckChicks.mp3',
+  'excitedDucks.mp3',
+  'hissingDuck.mp3',
+  'quackFly.mp3',
+  'quackRepeat.mp3',
+  'quietDucks.mp3',
+  'shortQuack.mp3',
+  'toyQuack.mp3',
+];
 
+// Previous functions remain the same until generateGroups...
 function createBalancedGroups(names, targetGroupSize) {
   const totalPeople = names.length;
   const minGroups = Math.ceil(totalPeople / targetGroupSize);
@@ -110,21 +120,44 @@ function createBalancedGroups(names, targetGroupSize) {
   return groups;
 }
 
+function createBalancedGroupsByFlockCount(names, targetFlockCount) {
+  const totalPeople = names.length;
+
+  // Calculate base group size and remainder
+  const baseGroupSize = Math.floor(totalPeople / targetFlockCount);
+  const remainder = totalPeople % targetFlockCount;
+
+  let groups = [];
+  let namesIndex = 0;
+
+  // Distribute names across groups
+  for (let i = 0; i < targetFlockCount; i++) {
+    // Determine if this group gets an extra person
+    const groupSize = baseGroupSize + (i < remainder ? 1 : 0);
+
+    // Slice the group from the names array
+    groups.push(names.slice(namesIndex, namesIndex + groupSize));
+    namesIndex += groupSize;
+  }
+
+  return groups;
+}
+
 function generateGroups() {
   const resultsDiv = document.getElementById('results');
   resultsDiv.innerHTML = '';
 
   const namesText = document.getElementById('names').value.trim();
-  const groupSize = parseInt(document.getElementById('groupSize').value);
-  const shouldOverflock = document.getElementById('overflock').checked;
+  const flockCount = parseInt(document.getElementById('flockCount').value);
+  const groupingMode = document.getElementById('groupingMode').value;
 
   if (!namesText) {
     showError();
     return;
   }
 
-  if (groupSize < 1) {
-    alert('Flock size must be at least 1!');
+  if (flockCount < 1) {
+    alert('Number of flocks must be at least 1!');
     return;
   }
 
@@ -132,6 +165,11 @@ function generateGroups() {
   updateURL(namesText);
 
   document.querySelector('.loading').style.display = 'block';
+  quackAudio = pickRandomQuack();
+  // Play quack sounds during loading
+  quackAudio.volume = 0.5;
+  quackAudio.loop = true;
+  quackAudio.play();
 
   let names = namesText
     .split('\n')
@@ -141,10 +179,11 @@ function generateGroups() {
   names = shuffleArray(names);
 
   let groups;
-  if (shouldOverflock) {
-    groups = createBalancedGroups(names, groupSize);
+  if (groupingMode === 'flockCount') {
+    groups = createBalancedGroupsByFlockCount(names, flockCount);
   } else {
-    // Original grouping logic
+    // Original grouping logic for ducks per flock
+    const groupSize = flockCount;
     groups = [];
     for (let i = 0; i < names.length; i += groupSize) {
       groups.push(names.slice(i, i + groupSize));
@@ -152,6 +191,9 @@ function generateGroups() {
   }
 
   setTimeout(() => {
+    quackAudio.pause();
+    quackAudio.currentTime = 0;
+
     document.querySelector('.loading').style.display = 'none';
 
     groups.forEach((group, index) => {
@@ -201,6 +243,29 @@ function generateGroups() {
     shareDiv.appendChild(shareButton);
     resultsDiv.appendChild(shareDiv);
   }, 3000);
+}
+
+function toggleSound() {
+  const soundToggle = document.getElementById('soundToggle');
+  soundToggle.classList.toggle('sound-off');
+
+  if (soundToggle.classList.contains('sound-off')) {
+    soundToggle.textContent = '🔇 Sound Off';
+    localStorage.setItem('duckSoundEnabled', 'false');
+  } else {
+    soundToggle.textContent = '🔊 Sound On';
+    localStorage.setItem('duckSoundEnabled', 'true');
+  }
+}
+
+function pickRandomQuack() {
+  const selectedQuack =
+    quackAudios[Math.floor(Math.random() * quackAudios.length)];
+
+  console.log(selectedQuack);
+
+  const audioElement = new Audio(selectedQuack);
+  return audioElement;
 }
 
 // Rest of the code remains the same...

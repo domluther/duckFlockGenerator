@@ -217,3 +217,35 @@ button:hover {
     transform: scale(1);
   }
 }
+
+.grouping-mode-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.grouping-mode-container select {
+  padding: 8px;
+  border: 2px solid #4299e1;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: white;
+}
+
+#soundToggle {
+  background-color: #48bb78;
+  color: white;
+  margin-left: 10px;
+}
+
+#soundToggle:hover {
+  background-color: #38a169;
+}
+
+#soundToggle.sound-off {
+  background-color: #e53e3e;
+}
+
+#soundToggle.sound-off:hover {
+  background-color: #c53030;
+}
