@@ -249,3 +249,28 @@ button:hover {
 #soundToggle.sound-off:hover {
   background-color: #c53030;
 }
+
+.flock.assignments {
+  grid-column: 1 / -1;
+}
+
+.flock.assignments ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.flock.assignments li {
+  padding: 8px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.flock.assignments li:last-child {
+  border-bottom: none;
+}
+
+.flock.assignments .arrow {
+  color: #4299e1;
+  font-weight: bold;
+  margin: 0 8px;
+}
