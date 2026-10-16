@@ -59,6 +59,12 @@ document.getElementById('names').addEventListener('input', function () {
   document.getElementById('error-message').style.display = 'none';
 });
 
+// Hide the number input in assign mode
+document.getElementById('groupingMode').addEventListener('change', function () {
+  document.getElementById('flockCount').style.display =
+    this.value === 'assign' ? 'none' : '';
+});
+
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -92,7 +98,6 @@ const quackAudios = [
   'toyQuack.mp3',
 ];
 
-// Previous functions remain the same until generateGroups...
 function createBalancedGroups(names, targetGroupSize) {
   const totalPeople = names.length;
   const minGroups = Math.ceil(totalPeople / targetGroupSize);
@@ -143,6 +148,55 @@ function createBalancedGroupsByFlockCount(names, targetFlockCount) {
   return groups;
 }
 
+// Each person is assigned the next person in a randomly shuffled circle,
+// so nobody ever gets themselves.
+function createAssignments(names) {
+  // Shuffle indices (not names) so duplicate names still work
+  const order = shuffleArray(names.map((_, i) => i));
+  const target = new Array(names.length);
+
+  order.forEach((personIndex, i) => {
+    target[personIndex] = order[(i + 1) % order.length];
+  });
+
+  // Return in the original input order so people can find their name easily
+  return names.map((name, i) => ({
+    reviewer: name,
+    reviewee: names[target[i]],
+  }));
+}
+
+function renderAssignments(assignments, resultsDiv) {
+  const flockDiv = document.createElement('div');
+  flockDiv.className = 'flock assignments';
+
+  const title = document.createElement('h3');
+  title.textContent = '🦆 Who checks whose work';
+
+  const list = document.createElement('ul');
+  assignments.forEach(({ reviewer, reviewee }) => {
+    const item = document.createElement('li');
+
+    const reviewerSpan = document.createElement('strong');
+    reviewerSpan.textContent = reviewer;
+
+    const arrow = document.createElement('span');
+    arrow.className = 'arrow';
+    arrow.textContent = '→';
+
+    const revieweeSpan = document.createElement('span');
+    revieweeSpan.textContent = reviewee;
+
+    item.append(reviewerSpan, arrow, revieweeSpan);
+    list.appendChild(item);
+  });
+
+  flockDiv.append(title, list);
+  resultsDiv.appendChild(flockDiv);
+
+  setTimeout(() => flockDiv.classList.add('visible'), 0);
+}
+
 function generateGroups() {
   const resultsDiv = document.getElementById('results');
   resultsDiv.innerHTML = '';
@@ -156,9 +210,19 @@ function generateGroups() {
     return;
   }
 
-  if (flockCount < 1) {
+  if (groupingMode !== 'assign' && flockCount < 1) {
     alert('Number of flocks must be at least 1!');
     return;
+  }
+
+  if (groupingMode === 'assign') {
+    const count = namesText
+      .split('\n')
+      .filter((n) => n.trim().length > 0).length;
+    if (count < 2) {
+      alert('You need at least 2 ducks to assign work checks!');
+      return;
+    }
   }
 
   // Update URL with current names
@@ -178,13 +242,16 @@ function generateGroups() {
 
   names = shuffleArray(names);
 
-  let groups;
-  if (groupingMode === 'flockCount') {
+  let groups = [];
+  let assignments = [];
+
+  if (groupingMode === 'assign') {
+    assignments = createAssignments(names);
+  } else if (groupingMode === 'flockCount') {
     groups = createBalancedGroupsByFlockCount(names, flockCount);
   } else {
     // Original grouping logic for ducks per flock
     const groupSize = flockCount;
-    groups = [];
     for (let i = 0; i < names.length; i += groupSize) {
       groups.push(names.slice(i, i + groupSize));
     }
@@ -195,6 +262,10 @@ function generateGroups() {
     quackAudio.currentTime = 0;
 
     document.querySelector('.loading').style.display = 'none';
+
+    if (groupingMode === 'assign') {
+      renderAssignments(assignments, resultsDiv);
+    }
 
     groups.forEach((group, index) => {
       const flockDiv = document.createElement('div');
@@ -267,8 +338,6 @@ function pickRandomQuack() {
   const audioElement = new Audio(selectedQuack);
   return audioElement;
 }
-
-// Rest of the code remains the same...
 
 // On page load, check for names in URL
 window.addEventListener('load', () => {
